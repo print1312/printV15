@@ -88,8 +88,13 @@
       #dd-addon .dd-title{font-size:.9rem;font-weight:700;overflow-wrap:anywhere}
       #dd-addon .dd-inline{display:flex;gap:4px;flex-wrap:wrap}
       #dd-addon .dd-inline button{padding:5px 9px;min-height:34px!important}
-      #dd-addon .dd-editorwrap{display:grid;place-items:center;background:#f1f5fa;border-radius:11px;padding:8px;min-height:240px}
-      #dd-addon #dd-editor{display:block;width:100%;max-width:100%;height:340px;touch-action:none;background:#e9edf3;border-radius:10px;box-shadow:inset 0 0 0 1px #d9e2ef}
+      #dd-addon .dd-editorstage{display:flex;align-items:stretch;gap:12px;background:#f1f5fa;border-radius:11px;padding:10px;min-height:320px}
+      #dd-addon .dd-editorwrap{display:grid;place-items:center;flex:1;min-width:0;background:#f1f5fa;border-radius:11px;padding:4px;min-height:320px}
+      #dd-addon #dd-editor{display:block;width:100%;max-width:100%;height:500px;touch-action:none;background:#e9edf3;border-radius:10px;box-shadow:inset 0 0 0 1px #d9e2ef}
+      #dd-addon .dd-viewzoom{width:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:10px;background:#e8eef7;padding:10px 6px;flex:0 0 46px}
+      #dd-addon .dd-viewzoom label{font-size:.75rem;font-weight:700;color:#244269;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.04em}
+      #dd-addon #dd-viewzoom{writing-mode:vertical-lr;direction:rtl;width:28px;height:100%;min-height:280px;flex:1 1 auto}
+      #dd-addon #dd-viewzoom-value{font-size:.78rem;color:#244269;font-weight:700;min-width:36px;text-align:center}
       #dd-addon progress{width:100%;height:12px;accent-color:#155bb0}
       #dd-addon #dd-state{font-size:.9rem;line-height:1.4;overflow-wrap:anywhere;white-space:pre-wrap}
       #dd-addon .dd-warning{color:#914916;background:#fff8eb;padding:10px;border-radius:8px;font-size:.85rem}
@@ -120,6 +125,13 @@
       #dd-addon .dd-no-image{color:#64748b}
       #dd-addon .dd-imageadjusts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px}
       #dd-addon .dd-imageadjusts label{min-width:0}
+      #dd-addon .dd-adjustitem{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;border:1px solid #dde6f2;border-radius:11px;padding:10px;background:#fff;min-width:0}
+      #dd-addon .dd-adjustlabel{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:650;font-size:.87rem}
+      #dd-addon .dd-adjustslider{display:block;width:100%;min-width:0;min-height:32px!important;margin:0}
+      #dd-addon .dd-adjuststepper{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:stretch;gap:8px;min-width:0}
+      #dd-addon .dd-adjuststepper button{margin:0!important;min-height:42px!important;padding:4px 2px!important;font-size:1.35rem;line-height:1}
+      #dd-addon .dd-adjuststepper input{margin:0!important;min-height:42px!important;min-width:0!important;width:100%;text-align:center;padding:5px 4px;font-variant-numeric:tabular-nums;font-size:16px!important}
+      #dd-addon .dd-adjuststepper button:disabled,#dd-addon .dd-adjuststepper input:disabled{opacity:.5}
       #dd-addon .dd-rangevalue{font-variant-numeric:tabular-nums;color:#155bb0;font-weight:700;font-size:.84rem}
       #dd-addon .dd-layerlist{display:grid;gap:6px;margin:8px 0}
       #dd-addon .dd-layer{display:flex;gap:6px;align-items:center;border:1px solid #d1dbe8;border-radius:9px;background:#fff;padding:6px}
@@ -131,7 +143,11 @@
       #dd-addon .dd-caption{font-size:.82rem;color:#475569}
       #dd-addon input[type=range]{accent-color:#155bb0}
       #dd-addon .dd-textsize-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-      @media(max-width:480px){#dd-addon .dd-imageadjusts{grid-template-columns:1fr}#dd-addon .dd-textsize-grid{grid-template-columns:1fr 1fr}}
+      #dd-addon .dd-flow-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+      #dd-addon .dd-flow-buttons button{padding:8px 10px;min-height:38px!important}
+      #dd-addon .dd-subpanel{border:1px solid #dbe3ed;border-radius:10px;background:#fff;padding:10px;margin-top:8px}
+      #dd-addon .dd-subpanel[hidden]{display:none!important}
+      @media(max-width:480px){#dd-addon .dd-imageadjusts{grid-template-columns:1fr}#dd-addon .dd-textsize-grid{grid-template-columns:1fr 1fr}#dd-addon .dd-editorstage{gap:8px;padding:8px}#dd-addon .dd-viewzoom{flex-basis:40px;width:28px;padding:8px 4px}#dd-addon #dd-viewzoom{min-height:250px}}
 
       @media(max-width:480px){
         button{margin:3px 2px 3px 0!important}
@@ -139,7 +155,7 @@
         #dd-addon .dd-inline{grid-column:2}
         #dd-addon .dd-thumb{width:40px;height:40px}
         #niimbot-mobile-head nav a{flex:1;text-align:center}
-        #dd-addon #dd-editor{height:300px}
+        #dd-addon #dd-editor{height:420px}
       }
     </style>`;
     const intro=`<div id="niimbot-mobile-head"><h2>📱 Niimbot Druckstudio für iPhone</h2>
@@ -160,14 +176,78 @@
         <label>Bildmodus<select id="dd-bw"><option value="default">Original / Graustufen im Drucker</option><option value="gray">Graustufen</option><option value="bw">Hartes Schwarzweiß (Schwelle)</option></select></label></div>
       <div class="dd-panel" id="dd-image-panel"><h3>🎚️ Bild bearbeiten</h3>
         <div class="dd-imageadjusts">
-          <label>Belichtung <span id="dd-exposure-value" class="dd-rangevalue">0</span><input id="dd-exposure" type="range" min="-100" max="100" step="1" value="0"></label>
-          <label>Kontrast <span id="dd-contrast-value" class="dd-rangevalue">0</span><input id="dd-contrast" type="range" min="-100" max="100" step="1" value="0"></label>
-          <label>Schwarzwert <span id="dd-blacks-value" class="dd-rangevalue">0</span><input id="dd-blacks" type="range" min="-100" max="100" step="1" value="0"></label>
-          <label>Weißwert <span id="dd-whites-value" class="dd-rangevalue">0</span><input id="dd-whites" type="range" min="-100" max="100" step="1" value="0"></label>
-          <label>Helligkeit <span id="dd-brightness-value" class="dd-rangevalue">0</span><input id="dd-brightness" type="range" min="-100" max="100" step="1" value="0"></label>
-          <label>Sättigung <span id="dd-saturation-value" class="dd-rangevalue">0</span><input id="dd-saturation" type="range" min="-100" max="100" step="1" value="0"></label>
-          <label>Gamma <span id="dd-gamma-value" class="dd-rangevalue">1.00</span><input id="dd-gamma" type="range" min="0.25" max="3" step="0.05" value="1"></label>
-          <label>Kontrast-Schwelle <span id="dd-threshold-value" class="dd-rangevalue">160</span><input id="dd-threshold" type="range" min="0" max="255" value="160"></label>
+          <div class="dd-adjustitem" data-adjust="exposure">
+            <label for="dd-exposure" class="dd-adjustlabel">Belichtung <output id="dd-exposure-value" class="dd-rangevalue">0</output></label>
+            <input id="dd-exposure" class="dd-adjustslider" type="range" min="-100" max="100" step="1" value="0" aria-label="Belichtung: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Belichtung: präzise einstellen">
+              <button id="dd-exposure-minus" type="button" aria-label="Belichtung um 1 verringern">−</button>
+              <input id="dd-exposure-number" type="number" min="-100" max="100" step="1" value="0" inputmode="decimal" aria-label="Belichtung: Zahlenwert">
+              <button id="dd-exposure-plus" type="button" aria-label="Belichtung um 1 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="contrast">
+            <label for="dd-contrast" class="dd-adjustlabel">Kontrast <output id="dd-contrast-value" class="dd-rangevalue">0</output></label>
+            <input id="dd-contrast" class="dd-adjustslider" type="range" min="-100" max="100" step="1" value="0" aria-label="Kontrast: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Kontrast: präzise einstellen">
+              <button id="dd-contrast-minus" type="button" aria-label="Kontrast um 1 verringern">−</button>
+              <input id="dd-contrast-number" type="number" min="-100" max="100" step="1" value="0" inputmode="decimal" aria-label="Kontrast: Zahlenwert">
+              <button id="dd-contrast-plus" type="button" aria-label="Kontrast um 1 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="blacks">
+            <label for="dd-blacks" class="dd-adjustlabel">Schwarzwert <output id="dd-blacks-value" class="dd-rangevalue">0</output></label>
+            <input id="dd-blacks" class="dd-adjustslider" type="range" min="-100" max="100" step="1" value="0" aria-label="Schwarzwert: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Schwarzwert: präzise einstellen">
+              <button id="dd-blacks-minus" type="button" aria-label="Schwarzwert um 1 verringern">−</button>
+              <input id="dd-blacks-number" type="number" min="-100" max="100" step="1" value="0" inputmode="decimal" aria-label="Schwarzwert: Zahlenwert">
+              <button id="dd-blacks-plus" type="button" aria-label="Schwarzwert um 1 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="whites">
+            <label for="dd-whites" class="dd-adjustlabel">Weißwert <output id="dd-whites-value" class="dd-rangevalue">0</output></label>
+            <input id="dd-whites" class="dd-adjustslider" type="range" min="-100" max="100" step="1" value="0" aria-label="Weißwert: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Weißwert: präzise einstellen">
+              <button id="dd-whites-minus" type="button" aria-label="Weißwert um 1 verringern">−</button>
+              <input id="dd-whites-number" type="number" min="-100" max="100" step="1" value="0" inputmode="decimal" aria-label="Weißwert: Zahlenwert">
+              <button id="dd-whites-plus" type="button" aria-label="Weißwert um 1 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="brightness">
+            <label for="dd-brightness" class="dd-adjustlabel">Helligkeit <output id="dd-brightness-value" class="dd-rangevalue">0</output></label>
+            <input id="dd-brightness" class="dd-adjustslider" type="range" min="-100" max="100" step="1" value="0" aria-label="Helligkeit: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Helligkeit: präzise einstellen">
+              <button id="dd-brightness-minus" type="button" aria-label="Helligkeit um 1 verringern">−</button>
+              <input id="dd-brightness-number" type="number" min="-100" max="100" step="1" value="0" inputmode="decimal" aria-label="Helligkeit: Zahlenwert">
+              <button id="dd-brightness-plus" type="button" aria-label="Helligkeit um 1 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="saturation">
+            <label for="dd-saturation" class="dd-adjustlabel">Sättigung <output id="dd-saturation-value" class="dd-rangevalue">0</output></label>
+            <input id="dd-saturation" class="dd-adjustslider" type="range" min="-100" max="100" step="1" value="0" aria-label="Sättigung: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Sättigung: präzise einstellen">
+              <button id="dd-saturation-minus" type="button" aria-label="Sättigung um 1 verringern">−</button>
+              <input id="dd-saturation-number" type="number" min="-100" max="100" step="1" value="0" inputmode="decimal" aria-label="Sättigung: Zahlenwert">
+              <button id="dd-saturation-plus" type="button" aria-label="Sättigung um 1 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="gamma">
+            <label for="dd-gamma" class="dd-adjustlabel">Gamma <output id="dd-gamma-value" class="dd-rangevalue">1.00</output></label>
+            <input id="dd-gamma" class="dd-adjustslider" type="range" min="0.25" max="3" step="0.05" value="1" aria-label="Gamma: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Gamma: präzise einstellen">
+              <button id="dd-gamma-minus" type="button" aria-label="Gamma um 0.05 verringern">−</button>
+              <input id="dd-gamma-number" type="number" min="0.25" max="3" step="0.05" value="1" inputmode="decimal" aria-label="Gamma: Zahlenwert">
+              <button id="dd-gamma-plus" type="button" aria-label="Gamma um 0.05 erhöhen">+</button>
+            </div>
+          </div>
+          <div class="dd-adjustitem" data-adjust="threshold">
+            <label for="dd-threshold" class="dd-adjustlabel">Kontrast-Schwelle <output id="dd-threshold-value" class="dd-rangevalue">160</output></label>
+            <input id="dd-threshold" class="dd-adjustslider" type="range" min="0" max="255" step="1" value="160" aria-label="Kontrast-Schwelle: Schieberegler">
+            <div class="dd-adjuststepper" role="group" aria-label="Kontrast-Schwelle: präzise einstellen">
+              <button id="dd-threshold-minus" type="button" aria-label="Kontrast-Schwelle um 1 verringern">−</button>
+              <input id="dd-threshold-number" type="number" min="0" max="255" step="1" value="160" inputmode="decimal" aria-label="Kontrast-Schwelle: Zahlenwert">
+              <button id="dd-threshold-plus" type="button" aria-label="Kontrast-Schwelle um 1 erhöhen">+</button>
+            </div>
+          </div>
         </div>
         <div class="dd-toolbar"><button id="dd-adjust-reset" type="button">Bildkorrekturen zurücksetzen</button><span class="dd-muted">Die Änderungen gelten für das gewählte Bild, nicht für deine Textfelder.</span></div>
       </div>
@@ -181,8 +261,8 @@
       <div class="dd-toolbar"><button id="dd-zoom-apply" type="button">Zoom anwenden</button><button id="dd-fit-reset" type="button">Einpassen</button><button id="dd-cover-reset" type="button">Füllen</button><button id="dd-clear" type="button">Warteschlange leeren</button><span id="dd-count" class="dd-muted">0 Etiketten</span></div>
       <div id="dd-queue" class="dd-queue" aria-live="polite"></div>
       <div id="dd-preview-title" class="dd-muted">Ausschnitt & Druckvorschau</div>
-      <div class="dd-editorwrap"><canvas id="dd-editor"></canvas></div>
-      <p class="dd-muted">Bedienung: Bild mit einem Finger verschieben, mit zwei Fingern zoomen, über den unteren rechten Griff skalieren oder über den oberen linken Griff drehen. Text antippen und verschieben. Der rote Rahmen ist der zu druckende Bereich.</p>
+      <div class="dd-editorstage"><div id="dd-viewzoom-wrap" class="dd-viewzoom"><label for="dd-viewzoom">Ansicht</label><input id="dd-viewzoom" type="range" min="35" max="180" step="1" value="100" aria-label="Vorschau zoomen"><div id="dd-viewzoom-value">100%</div></div><div id="dd-editorwrap" class="dd-editorwrap"><canvas id="dd-editor"></canvas></div></div>
+      <p class="dd-muted">Bedienung: Bild mit einem Finger verschieben, mit zwei Fingern zoomen, über den unteren rechten Griff skalieren oder über den oberen linken Griff drehen. Text antippen und verschieben. Mit dem linken Ansichtsschieber kannst du die komplette Vorschau inklusive rotem Druckrahmen größer oder kleiner darstellen. Der rote Rahmen ist der zu druckende Bereich.</p>
       <div class="dd-row"><div style="flex:1;min-width:220px"><div class="dd-muted" style="margin-bottom:6px">Ausrichten</div><div class="dd-controlgrid"><button id="dd-align-left" type="button">Links</button><button id="dd-align-center-x" type="button">Horizontal zentrieren</button><button id="dd-align-right" type="button">Rechts</button><button id="dd-align-top" type="button">Oben</button><button id="dd-align-center-y" type="button">Vertikal zentrieren</button><button id="dd-align-bottom" type="button">Unten</button></div></div>
       <div class="fit"><div class="dd-muted" style="margin-bottom:6px">Verschieben</div><div class="dd-direction"><span class="sp">·</span><button id="dd-nudge-up" type="button">↑</button><span class="sp">·</span><button id="dd-nudge-left" type="button">←</button><span class="sp">·</span><button id="dd-nudge-right" type="button">→</button><span class="sp">·</span><button id="dd-nudge-down" type="button">↓</button><span class="sp">·</span></div></div></div>
       <div class="dd-panel" id="dd-text-panel">
@@ -209,6 +289,32 @@
           </div>
           <div class="dd-row"><label>Zeichenabstand (px)<input id="dd-letterspace" type="number" min="-5" max="30" step=".5" value="0"></label>
             <label>Zeilenabstand (%)<input id="dd-lineheight" type="number" min="70" max="300" step="5" value="120"></label></div>
+          <div class="dd-section-title">Textrichtung</div>
+          <div class="dd-flow-buttons">
+            <button id="dd-flow-horizontal" type="button" aria-pressed="true">ABC → Gerade</button>
+            <button id="dd-flow-vertical" type="button" aria-pressed="false">ABC ↓ Vertikal</button>
+            <button id="dd-flow-curve" type="button" aria-pressed="false">ABC ⤿ Rundung</button>
+          </div>
+                    <div id="dd-curve-controls" class="dd-subpanel" hidden>
+            <div class="dd-caption">Niimbot-ähnliche Rundung: Bogenposition, Innen-/Außenseite, Radius und Winkel direkt für runde Sticker einstellen.</div>
+            <div class="dd-section-title" style="margin-top:0">Bogenposition</div>
+            <div class="dd-flow-buttons">
+              <button id="dd-curve-place-top" type="button" aria-pressed="true">Oben</button>
+              <button id="dd-curve-place-bottom" type="button" aria-pressed="false">Unten</button>
+              <button id="dd-curve-place-circle" type="button" aria-pressed="false">Voller Kreis</button>
+            </div>
+            <div class="dd-section-title">Innen / Außen</div>
+            <div class="dd-flow-buttons">
+              <button id="dd-curve-facing-outside" type="button" aria-pressed="true">Außen</button>
+              <button id="dd-curve-facing-inside" type="button" aria-pressed="false">Innen</button>
+              <button id="dd-curve-duplicate-opposite" type="button">Gegenbogen duplizieren</button>
+            </div>
+            <div class="dd-rotationrow" style="margin-top:8px"><label for="dd-curvedeg" style="font-size:.85rem">Bogenwinkel</label><input id="dd-curvedeg" type="range" min="0" max="360" step="1" value="180" aria-label="Text-Rundung in Grad">
+            <input id="dd-curvedeg-num" type="number" min="0" max="360" step="1" value="180" inputmode="numeric" aria-label="Text-Rundung Grad"><span class="dd-badge">°</span></div>
+            <div class="dd-rotationrow" style="margin-top:8px"><label for="dd-curveradius" style="font-size:.85rem">Radius</label><input id="dd-curveradius" type="range" min="0" max="1200" step="1" value="0" aria-label="Text-Radius in Pixel">
+            <input id="dd-curveradius-num" type="number" min="0" max="1200" step="1" value="0" inputmode="numeric" aria-label="Text-Radius in Pixel"><span class="dd-badge">px</span><button id="dd-curveradius-auto" type="button">Auto</button></div>
+            <p class="dd-caption" style="margin:8px 0 0">0 px = Radius automatisch aus der Textfeldgröße ableiten. Für getrennten oberen und unteren Rundtext kannst du „Gegenbogen duplizieren“ verwenden und beide Texte anschließend separat bearbeiten.</p>
+          </div>
           <div class="dd-row"><label>Textrotation (°)<input id="dd-textrotation" type="number" min="-360" max="360" step="1" value="0"></label>
             <label>Textfeld-Zoom (%)<input id="dd-textzoom" type="number" min="5" max="4000" step="1" value="100" inputmode="numeric"></label>
             <label>Textgröße anpassen<select id="dd-textscaling"><option value="none">Wie eingegeben</option><option value="fit">Automatisch in Textbreite einpassen</option></select></label></div>
