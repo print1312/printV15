@@ -1,57 +1,86 @@
-# Niimbot Druckstudio V14 – Vorlagen und freier Bearbeitungsbereich
+# Niimbot Druckstudio V15 – geprüfte Überarbeitung
 
-Die Web-App baut auf V13 und auf der ursprünglichen [iscarelli/niimbot-web-bluetooth](https://github.com/iscarelli/niimbot-web-bluetooth)-Demo auf. Die Original-Demo wird zur Laufzeit über HTTPS geladen, sodass die Modell-/Bluetooth-Auswahl und die vorhandene Rollenverwaltung weiterverwendet werden.
+Überarbeitung der hochgeladenen V14-App. 86 automatisierte Prüfungen sind
+bestanden. Die einzelnen Ergebnisse und die Grenzen der Prüfung stehen in
+`TESTBERICHT.md`. Echte Ausdrucke und die Bedienung auf iPhone/Bluefy wurden
+in dieser Umgebung nicht geprüft.
 
-## Neu in V14
+## Bestehende Website aktualisieren
 
-### Roter Druckrahmen um 90° drehen
+1. Bisherige App-Dateien sichern. Wichtige Vorlagen in V14 zusätzlich als JSON exportieren.
+2. Die ZIP entpacken. `index.html`, `addon.js`, `.nojekyll` und den **vollständigen
+   Ordner `vendor`** in dasselbe Hauptverzeichnis des bisherigen GitHub-Pages-
+   Repositories bzw. HTTPS-Webservers übertragen. Vorhandene App-Dateien ersetzen.
+3. Veröffentlichung abwarten und die bisherige HTTPS-Adresse neu laden. Im Kopf
+   der App muss **V15** stehen. Ein erneutes Laden kann bei altem Browsercache nötig sein.
+4. Druckermodell, Rolle und Dichte prüfen, verbinden und zuerst ein einzelnes
+   Testetikett ausgeben. Danach 90°-Ausrichtung, Kopien und Stopp prüfen.
 
-Unter **⌖ Ausrichten → Roten Druckrahmen 90° drehen** wechselt die Vorschau zwischen Hoch- und Querformat. Diese Einstellung betrifft den **gesamten Etiketten-/Druckbereich**, nicht nur ein Bild oder ein Textfeld. Die Bild- und Textobjekte bleiben individuell bearbeitbar. Beim Drucken wird das Bild wieder passend zu den vom Treiber erwarteten physischen Abmessungen der gewählten Rolle gerastert und ausgerichtet.
+Die Ordnerstruktur unbedingt erhalten: Neben `index.html` liegt `addon.js`;
+darunter liegen `vendor/niimbot` und `vendor/pdfjs`. Nur die beiden JavaScript-/
+HTML-Dateien hochzuladen reicht bei V15 nicht mehr. `pruefung` enthält die
+reproduzierbaren Entwicklertests und wird für den Websitebetrieb nicht benötigt.
 
-### Inhalte außerhalb des Druckbereichs
+Für eine neue GitHub-Pages-Website die Dateien ins Repository-Hauptverzeichnis
+laden und dort Pages aus dem gewünschten Branch und `/(root)` veröffentlichen.
+Die App muss über HTTPS oder eine geeignete lokale Entwicklungsadresse laufen.
+Das direkte Öffnen per `file://` ist kein unterstützter Betriebsweg.
 
-Mit **Außen zeigen** direkt über der Vorschau (oder dem Kontrollkästchen im Tab **Ausrichten**) werden Bilder und Texte auch außerhalb der gestrichelten roten Grenze dargestellt. Die Umrisse nicht ausgewählter Ebenen werden dezent gestrichelt gezeigt. So lassen sich überstehende Bereiche auswählen und verschieben. **Gedruckt wird ausschließlich, was sich im roten Rahmen befindet.** „Außen ausblenden“ zeigt wieder nur den bedruckbaren Bereich. Der seitliche Ansichts-Zoom skaliert ausschließlich die Ansicht, nicht die Druckdaten.
+## Behobene Fehler und verbesserte Abläufe
 
-### Vorlagen speichern und wiederverwenden
+- **Vorschau und Gesten:** tatsächliche Canvas-Abmessungen, passende Touch-
+  Koordinaten, serielles Neuzeichnen, keine veralteten Auswahlgriffe nach dem Leeren,
+  zuverlässigeres Verschieben kleiner Texte und Begrenzung auf zwei aktive Finger.
+- **Rundtext und Schrift:** Vollkreis mit 360°, gerader Text bei 0°, ausreichend
+  großer Rahmen für manuelle Radien, korrekte generische Schriftfamilien und
+  durchgängiger Schutz gesperrter Ebenen, auch im Rundtext-Tab.
+- **Bilder und Beschnitt:** gleichartige Bildkorrektur für Ansicht und Druck,
+  Wiederverwendung berechneter Filter, Filtercache bis zwölf Millionen Pixel,
+  Freigabe dekodierter Bilder inaktiver Etiketten, Erhalt von Position/Rotation/Zoom
+  beim Zuschneiden. Der Import-Beschnitt wird anschließend passend eingepasst.
+- **Rückgängig/Wiederholen:** einzelne schnelle Klicks bleiben einzelne Schritte;
+  Loslassen eines Reglers außerhalb schließt die Geste; verschiedene Binärdateien
+  werden zuverlässig unterschieden. Änderungen an Druckgröße und Modell können
+  zusammen mit den betroffenen Vorlagen zurückgenommen werden.
+- **Vorlagen:** Name und Ordner folgen dem ausgewählten Etikett; unabhängige
+  Speicherkopien und konsistente Exporte; eigene Schriftdateien in neuen Vorlagen
+  und JSON-Backups enthalten; fehlerhafte Importe werden vor dem Speichern
+  abgewiesen. Mehrfachimporte sind atomar.
+- **Rollengrößen:** alle geöffneten gespeicherten Vorlagen werden bei einem Wechsel
+  berücksichtigt. Gleiche physische Maße unter anderem Größenschlüssel behalten
+  ihr Layout. Andere Maße führen weiterhin zur Übernahme als ein Gesamtbild;
+  das gespeicherte Original bleibt erhalten.
+- **PDF und Dateiimport:** enthaltene PDF-Schriften und Zeichentabellen,
+  deaktivierte Eval-Auswertung, Ressourcenfreigabe nach PDF-Verarbeitung,
+  nachvollziehbare Angaben zu übersprungenen Dateien, Begrenzung der Warteschlange
+  und Schutz gegen überlappende Importe.
+- **Druck:** fester Auftrag mit festgehaltenen Daten und Einstellungen; währenddessen
+  keine Bearbeitung; sichtbarer Stopp; ganze Kopienzahlen von 1 bis 30;
+  Abbruch vor der nächsten Kopie. Ein laufendes Etikett kann noch ausgegeben
+  werden. Fehler lösen keine automatische Wiederholung aus.
+- **Auslieferung:** Druckertreiber, Registry und PDF-Ressourcen sind mitgeliefert.
+  Beim normalen Start wird kein veränderlicher externer `main`-Zweig geladen.
 
-Unten auf **💾 Save** oder auf den Tab **💾 Vorlagen** tippen. Du kannst:
+## Vorlagen und Schriftarten behalten
 
-- einen Vorlagennamen und Ordner eingeben,
-- mit **Speichern** die aktuelle Vorlage neu speichern oder ihre frühere Version überschreiben,
-- mit **Speichern unter …** eine eigenständige Kopie anlegen,
-- mit **↓ Als Datei** ein vollständiges Backup als `.niimbot-label.json` herunterladen,
-- exportierte Vorlagen mit **↑ Datei öffnen** wieder importieren,
-- gespeicherte Vorlagen nach Name oder Ordner suchen,
-- über die Vorlagenliste **Bearbeiten**, **Kopie**, **+ Warteschlange**, **🖨 Drucken**, **↓ Datei** und **Löschen** verwenden.
+Die bestehenden IndexedDB-Namen aus V14 bleiben unverändert. Daten gehören zum
+Browserprofil und zur Website-Origin (Protokoll, Hostname, Port). Verschiedene
+Repository-Pfade unter derselben `BENUTZERNAME.github.io`-Domain teilen diesen
+Speicher; eine andere Domain oder ein anderes Browserprofil besitzt einen
+anderen Speicher. Das Löschen von Browserdaten kann Vorlagen und Fonts entfernen.
 
-Bei **🖨 Drucken** wird nur die ausgewählte gespeicherte Vorlage an den verbundenen Drucker geschickt; bereits vorhandene Aufträge in der Warteschlange bleiben unverändert. Vor dem Druck bitte die eingelegte Etikettenrolle mit den oben gewählten Abmessungen abgleichen.
+Es gibt keine Cloud-Synchronisation. JSON-Export/-Import dient als Backup und
+zur Übertragung. Frühere V14-Exporte enthalten keine Schriftdateien; die damals
+verwendeten eigenen Fonts gegebenenfalls zusätzlich hochladen. Neue V15-Exporte
+enthalten die verwendeten, verfügbaren eigenen Schriftarten.
 
-**Wichtig zur Speicherung:** Die Vorlagen werden in **IndexedDB des jeweiligen Browsers unter genau dieser Website-Adresse** gespeichert. Damit sind sie bei späteren Besuchen derselben Website im selben Browserprofil wieder verfügbar, solange die Browserdaten nicht entfernt werden. Es handelt sich **nicht um einen Cloud-Server mit Benutzerkonten**: Ein anderes iPhone, ein anderer Browser oder ein neues GitHub-Pages-Repository hat einen getrennten Speicher. Verwende JSON-Export/-Import für Übertragung und Backups. Für eine echte browserübergreifende Cloud-Synchronisation wäre ein zusätzlicher Server mit Nutzeranmeldung notwendig.
+## Prüfung und Drittanbieter
 
-### Gespeicherte Etiketten auf neuen Rollengrößen
+`TESTBERICHT.md` enthält die Prüfungsergebnisse, `pruefung/` die Tests und
+maschinenlesbaren Resultate, `DRITTANBIETER.md` die Versions- und Lizenzangaben.
+`PRUEFSUMMEN.sha256` enthält SHA-256-Prüfsummen aller ausgelieferten Dateien
+außer der Prüfsummendatei selbst.
 
-Beispiel: Eine Vorlage wurde auf **50 × 30 mm** gestaltet, im oberen Druckermenü wird jetzt **80 × 50 mm** eingestellt.
-
-Beim Öffnen der gespeicherten Vorlage mit abweichender Rollengröße wird das gesamte ursprüngliche Etikett zu einer **zusammenhängenden Bilddatei**. Diese wird im neuen roten Rahmen wie beim Bildimport behandelt: Du kannst sie verschieben, skalieren, rotieren und zuschneiden. Der alte Entwurf bleibt unverändert im Vorlagenspeicher. Bei **gleicher Rollengröße** werden die einzelnen Bild- und Textebenen zum Weiterbearbeiten geladen. Wird eine bereits geöffnete editierbare gespeicherte Vorlage auf eine andere Rollengröße umgestellt, wird sie ebenfalls als Gesamtbild übernommen.
-
-## Installation in GitHub Pages
-
-1. Die ZIP entpacken. Darin liegen `index.html`, `addon.js`, `.nojekyll` und diese `README.md`.
-2. In einem **neuen GitHub-Repository** die Dateien ins **Hauptverzeichnis** laden. In einem vorhandenen Repository `index.html` und `addon.js` durch diese Version ersetzen. Bestehende Dateien vorher sichern.
-3. **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: main → Folder: /(root) → Save** wählen.
-4. GitHub veröffentlicht die Website unter `https://BENUTZERNAME.github.io/REPOSITORYNAME/`.
-5. Auf dem iPhone diese **HTTPS-Adresse** mit einem Browser öffnen, der Web Bluetooth für das jeweilige Gerät bereitstellt (z. B. Bluefy, soweit dort unterstützt); auf Desktop Chromium/Chrome verwenden.
-6. Oben Druckermodell, Etikettengröße und Dichte einstellen, **Drucker verbinden**, vorhandene RFID-/Rolleneinstellungen verwenden und zunächst nur **ein Testetikett** drucken.
-
-Die Anwendung benötigt beim Aufruf Internet, um die ursprüngliche Niimbot-Demo (GitHub/jsDelivr) zu laden. Ein lokales Öffnen der HTML-Datei ist für Web-Bluetooth-Druck nicht vorgesehen; nutze GitHub Pages oder eine andere HTTPS-Website.
-
-## Bisherige Funktionen
-
-Die zuvor vorhandenen Funktionen bleiben angebunden: PDF/PNG/JPG-Dateiimport mit DPI, mehrere Bilder und Textfelder, Ebenenreihenfolge und Ebenensperren, freie Zuschnitte einschließlich Kreis und Seitenverhältnis-Vorgaben, Bildkorrekturen mit Slidern und Zahlenfeldern, Touch-Gesten, Elementrotation, Schriftarten-Upload, invertierte Textfelder, Rundtext/Kreisbogen, Rückgängig/Wiederholen, Stapeldruck, Rollenverwaltung und Debug-Log.
-
-## Technische Prüfung
-
-- JS-Syntax mit Node.js geprüft.
-- Simulierter mobiler Chromium-DOM-Test: Text hinzufügen, Vorlage speichern, Kopie öffnen, eigene Vorlage erneut drucken, Save As, 90°-Druckrahmen, neue Etikettengröße als Gesamtbild, Vorschau außerhalb des Druckbereichs, simulierten Stapeldruck. Es wurden keine JavaScript-Laufzeitfehler gemeldet.
-- Die Pixelkontrolle für ein außerhalb des roten Rahmens platziertes schwarzes Bild war erfolgreich.
-- Der **echte Druck mit Hardware und iPhone/Bluefy ist nicht getestet**. Die Original-Verbindungslogik bleibt unverändert; unbekannte Niimbot-Modelle können Einschränkungen haben.
+Die App verwendet weiterhin den Niimbot-Web-Bluetooth-Treiber des ursprünglichen
+Projekts. Modell-, Firmware- und Browserkompatibilität müssen mit dem tatsächlich
+eingesetzten Gerät geprüft werden. Dieses Paket ist keine Offline-PWA.
