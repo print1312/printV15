@@ -16,37 +16,44 @@
   <div class="loading" role="status">
     <h1>Niimbot Druckstudio</h1>
     <p>Die originale Niimbot-Web-App und die iPhone-Erweiterung werden geladen …</p>
-    <p id="boot-error" style="color:#475569">Eine Internetverbindung ist erforderlich. Die Original-Demo wird über HTTPS geladen.</p>
+    <p id="boot-error" style="color:#475569">Druckstudio V15 und die mitgelieferten Druckermodule werden geladen.</p>
     <p style="font-size:.86rem;color:#475569">Hinweis: Die Bluetooth-Druckerauswahl erscheint erst, nachdem die Original-Demo geladen wurde. Auf dem iPhone die veröffentlichte Seite in Bluefy öffnen.</p>
     <button id="retry" onclick="location.reload()" hidden>Erneut versuchen</button>
   </div>
   <script>
   (async function loadOriginalDemo(){
-    const REMOTE = 'https://cdn.jsdelivr.net/gh/iscarelli/niimbot-web-bluetooth@main/';
+    const REMOTE = new URL('vendor/niimbot/',window.location.href).href;
     const SOURCES = [
-      REMOTE + 'demo/index.html',
-      'https://raw.githubusercontent.com/iscarelli/niimbot-web-bluetooth/main/demo/index.html'
+      REMOTE + 'demo/index.html'
     ];
     let html = '',lastError='';
     for(const url of SOURCES){
       try{
-        const res=await fetch(url,{cache:'no-cache'});
+        const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
+        let res;try{res=await fetch(url,{cache:'no-cache',signal:controller.signal});}finally{clearTimeout(timeout);}
         if(!res.ok)throw Error('HTTP '+res.status);
         const source=await res.text();
         if(!source.includes('id="identify"') || !source.includes('id="rollbox"') || !source.includes('Niimbot'))
           throw Error('Quelldatei entspricht nicht der erwarteten Original-Demo.');
-        html=source;break;
+        html=source.replace('const t = Date.now();', 'const t = "f20bb901-v15";').replace(/<html[^>]*>/,'<html lang="de">').replace(/<title>[\s\S]*?<\/title>/,'<title>Niimbot Druckstudio V15</title>');break;
       }catch(e){lastError=(e&&e.message)||String(e);}
     }
     if(!html){
       document.getElementById('boot-error').textContent =
-        'Die GitHub-Demo konnte nicht geladen werden. Netzwerk/CDN prüfen.\nDetails: '+lastError;
+        'Die App-Dateien konnten nicht geladen werden. Bitte den vollständigen vendor-Ordner mit hochladen.\nDetails: '+lastError;
       document.getElementById('retry').hidden=false;
       return;
     }
-    const ownAddon=new URL('addon.js',window.location.href).href;
+    const ownAddon=new URL('addon.js?v=15',window.location.href).href;
     const base='<base href="'+REMOTE+'demo/">';
     const extraStyle=`<style>
+#dd-stop:disabled{display:none!important}
+#dd-addon .dd-dockmain button[hidden]{display:none!important}
+#dd-editor,#dd-crop-canvas{margin:0!important;border:0!important;image-rendering:auto!important}
+body.dd-has-studio,#dd-addon{height:var(--studio-height,100dvh)!important;max-height:var(--studio-height,100dvh)!important}
+#dd-addon .dd-layer{flex-wrap:wrap}#dd-addon .dd-layer label{flex:1 1 120px}
+#dd-addon .dd-viewzoom{min-height:0!important;overflow:hidden}#dd-addon #dd-viewzoom{flex:1 1 auto;min-height:20px!important}
+
       :root{color-scheme:light}
       html{scroll-behavior:smooth;overflow-x:hidden}
       body{max-width:940px!important;margin:0 auto!important;padding:16px 14px 64px!important;
@@ -198,7 +205,7 @@ body{max-width:1080px!important;padding:4px 8px!important;background:#edf2f9!imp
 #dd-addon .dd-printerbar-head strong{font-size:.96rem;letter-spacing:-.01em;color:#12335f}
 #dd-addon .dd-printer-controls{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end}
 #dd-addon .dd-printer-controls>label{display:flex;flex:1 1 125px;flex-direction:column;gap:3px;font-size:.72rem;color:#52647a;min-width:0;white-space:normal}
-#dd-addon .dd-printer-controls select{width:100%;min-width:0;min-height:35px!important;height:35px;padding:5px 22px 5px 6px;font-size:14px!important}
+#dd-addon .dd-printer-controls select{width:100%;min-width:0;min-height:35px!important;height:35px;padding:5px 22px 5px 6px;font-size:16px!important}
 #dd-addon .dd-printer-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:6px}
 #dd-addon .dd-printer-actions button{min-height:34px!important;margin:0!important;padding:6px 10px!important;font-size:.78rem}
 #dd-addon .dd-printer-actions #identify{flex:1 1 140px}
@@ -298,7 +305,9 @@ body{max-width:1080px!important;padding:4px 8px!important;background:#edf2f9!imp
 #dd-addon #dd-template-search{width:100%}
 @media(max-width:400px){#dd-addon .dd-preview-head .dd-preview-name{display:none}#dd-addon .dd-preview-head{gap:2px}#dd-addon .dd-preview-head #dd-preview-overflow-toggle{font-size:.65rem}#dd-addon .dd-dockmain{gap:4px}#dd-addon .dd-dockmain button{padding:5px!important;font-size:.70rem}}
 @media(min-width:720px){#dd-addon .dd-tabcontent .dd-imageadjusts{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    </style>`;
+    #dd-addon .dd-printer-controls select{font-size:16px!important}
+body.dd-has-studio,#dd-addon{height:var(--studio-height,100dvh)!important;max-height:var(--studio-height,100dvh)!important}
+</style>`;
     const intro=`<div id="niimbot-mobile-head"><h2>📱 Niimbot Druckstudio für iPhone</h2>
       <p>Mit Bluefy über HTTPS öffnen. Die originale Bluetooth-Druckerwahl und die gesamte Rollenverwaltung bleiben erhalten.</p>
       <nav><a href="#identify">🖨 Drucker</a><a href="#dd-addon">📄 Dateien</a><a href="#rollbox">🏷 Rollen</a></nav></div>`;
